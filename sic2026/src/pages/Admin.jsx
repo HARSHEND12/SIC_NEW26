@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient.js'
 const statusStyles = {
   submitted: 'bg-surface text-muted',
   shortlisted: 'bg-signal-tint text-signal-dark',
+  payment_submitted: 'bg-signal-tint text-signal-dark',
   confirmed: 'bg-byte-tint text-byte',
   rejected: 'bg-surface text-muted',
   failed: 'bg-warn-tint text-warn',
@@ -172,7 +173,7 @@ export default function Admin() {
       </div>
 
       <div className="flex gap-2 mb-4 flex-wrap">
-        {['all', 'submitted', 'shortlisted', 'confirmed', 'rejected', 'failed'].map((s) => (
+        {['all', 'submitted', 'shortlisted', 'payment_submitted', 'confirmed', 'rejected', 'failed'].map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
@@ -211,6 +212,9 @@ export default function Admin() {
                     {r.abstract_title && (
                       <p className="text-xs text-muted mt-0.5">{r.abstract_title}</p>
                     )}
+                    {r.payment_note && (
+                      <p className="text-xs text-muted mt-0.5 font-mono">UTR: {r.payment_note}</p>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-muted">{r.college_name}</td>
                   <td className="px-4 py-3 text-muted">{r.track}</td>
@@ -240,6 +244,16 @@ export default function Admin() {
                             Reject
                           </button>
                         </>
+                      )}
+                      {r.status === 'payment_submitted' && (
+                        <button
+                          disabled={updatingId === r.id}
+                          onClick={() => setStatus(r.id, 'confirmed')}
+                          className="inline-flex items-center gap-1 text-xs border border-rule px-3 py-1.5 rounded-lg hover:border-byte hover:text-byte hover:shadow-glow-cyan transition-all disabled:opacity-50"
+                        >
+                          <Check size={12} />
+                          Confirm payment
+                        </button>
                       )}
                       <button
                         onClick={() => copyLink(r.id)}
