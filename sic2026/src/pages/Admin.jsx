@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Download, Check, X, LogIn, Link as LinkIcon } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Download, Check, X, LogIn, Link as LinkIcon, ScanLine } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient.js'
 
 const statusStyles = {
@@ -135,20 +136,29 @@ export default function Admin() {
     <div className="max-w-6xl mx-auto px-6 py-12 relative">
       <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-byte/10 blur-[100px] -z-10" />
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
         <div>
           <h1 className="font-display text-2xl">
             Organizer <span className="gradient-text">dashboard</span>
           </h1>
           <p className="text-sm text-muted">Byte and Qbit club admin view</p>
         </div>
-        <button
-          onClick={exportCsv}
-          className="inline-flex items-center gap-2 text-sm glass px-4 py-2 rounded-lg hover:border-signal hover:text-ink transition-colors"
-        >
-          <Download size={14} />
-          Export CSV
-        </button>
+        <div className="flex gap-2">
+          <Link
+            to="/checkin"
+            className="inline-flex items-center gap-2 text-sm glass px-4 py-2 rounded-lg hover:border-byte hover:text-byte transition-colors"
+          >
+            <ScanLine size={14} />
+            Check-in mode
+          </Link>
+          <button
+            onClick={exportCsv}
+            className="inline-flex items-center gap-2 text-sm glass px-4 py-2 rounded-lg hover:border-signal hover:text-ink transition-colors"
+          >
+            <Download size={14} />
+            Export CSV
+          </button>
+        </div>
       </div>
 
       {notice && (
@@ -214,6 +224,11 @@ export default function Admin() {
                     )}
                     {r.payment_note && (
                       <p className="text-xs text-muted mt-0.5 font-mono">UTR: {r.payment_note}</p>
+                    )}
+                    {r.checked_in_at && (
+                      <p className="text-xs text-byte mt-0.5">
+                        Checked in {new Date(r.checked_in_at).toLocaleTimeString()}
+                      </p>
                     )}
                   </td>
                   <td className="px-4 py-3 text-muted">{r.college_name}</td>
