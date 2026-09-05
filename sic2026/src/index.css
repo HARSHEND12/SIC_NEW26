@@ -123,3 +123,6 @@ body.cursor-hidden * {
   .cursor-dot, .cursor-ring { display: none; }
   body.cursor-hidden, body.cursor-hidden * { cursor: auto; }
 }
+@media print {
+  header, footer, .cursor-dot, .cursor-ring { display: none !important; }
+}
