@@ -90,35 +90,27 @@ export default function Register() {
         abstractFilePath = path
       }
 
-      const { data: reg, error: insertError } = await supabase
-        .from('registrations')
-        .insert({
-          full_name: data.fullName,
-          roll_number: data.rollNumber,
-          email: data.email.trim().toLowerCase(),
-          phone: data.phone,
-          department: data.department,
-          year: data.year,
-          college_name: data.collegeName,
-          track: data.track,
-          abstract_title: needsAbstract ? data.abstractTitle : null,
-          abstract_text: needsAbstract ? data.abstractText : null,
-          abstract_file_path: abstractFilePath,
-          status: 'submitted',
-        })
-        .select()
-        .single()
-
+      const { data: reg, error: insertError } = await supabase.rpc('submit_registration', {
+        p_full_name: data.fullName,
+        p_roll_number: data.rollNumber,
+        p_email: data.email,
+        p_phone: data.phone,
+        p_department: data.department,
+        p_year: data.year,
+        p_college_name: data.collegeName,
+        p_track: data.track,
+        p_abstract_title: needsAbstract ? data.abstractTitle : null,
+        p_abstract_text: needsAbstract ? data.abstractText : null,
+        p_abstract_file_path: abstractFilePath,
+      })
       if (insertError) {
         if (insertError.code === '23505') {
-          // Postgres unique_violation — this email already has a registration.
           throw new Error(
             'You\u2019ve already registered with this email. Use "Check status" in the top nav to find your ticket.'
           )
         }
         throw insertError
       }
-
       // Fire-and-forget — email failure should never block registration.
       supabase.functions
         .invoke('send-status-email', {
@@ -129,7 +121,7 @@ export default function Register() {
             registrationId: reg.id,
           },
         })
-        .catch(() => {})
+        .catch(() => { })
 
       navigate(`/ticket/${reg.id}`)
     } catch (err) {
@@ -200,11 +192,10 @@ export default function Register() {
                 type="button"
                 key={t}
                 onClick={() => setValue('track', t, { shouldValidate: true })}
-                className={`text-sm px-4 py-2 rounded-full border transition-all ${
-                  selectedTrack === t
+                className={`text-sm px-4 py-2 rounded-full border transition-all ${selectedTrack === t
                     ? 'bg-signal-tint border-signal text-signal-dark shadow-glow-soft'
                     : 'border-rule text-muted hover:border-signal hover:text-ink'
-                }`}
+                  }`}
               >
                 {t}
               </button>
