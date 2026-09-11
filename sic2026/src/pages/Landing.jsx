@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   Sparkles,
@@ -8,36 +9,124 @@ import {
   ArrowRight,
   Calendar,
   Layers,
+  Cpu,
 } from 'lucide-react'
 
+const heroLine = 'Student innovation conference'
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+}
+
+function MagneticButton({ children, className, as: Component = 'button', ...props }) {
+  const ref = useRef(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const sx = useSpring(x, { stiffness: 200, damping: 15, mass: 0.3 })
+  const sy = useSpring(y, { stiffness: 200, damping: 15, mass: 0.3 })
+
+  function handleMove(e) {
+    const rect = ref.current.getBoundingClientRect()
+    x.set((e.clientX - rect.left - rect.width / 2) * 0.35)
+    y.set((e.clientY - rect.top - rect.height / 2) * 0.35)
+  }
+  function handleLeave() {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ x: sx, y: sy }}
+      className="inline-block"
+    >
+      <Component className={className} {...props}>
+        {children}
+      </Component>
+    </motion.div>
+  )
+}
+
+function Counter({ to, suffix = '', prefix = '' }) {
+  const [val, setVal] = useState(0)
+  const [started, setStarted] = useState(false)
+
+  function start() {
+    if (started) return
+    setStarted(true)
+    const duration = 1200
+    const t0 = performance.now()
+    function tick(now) {
+      const p = Math.min((now - t0) / duration, 1)
+      const eased = 1 - Math.pow(1 - p, 3)
+      setVal(Math.round(to * eased))
+      if (p < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }
+
+  return (
+    <motion.span onViewportEnter={start} viewport={{ once: true }}>
+      {prefix}{val}{suffix}
+    </motion.span>
+  )
+}
+
 const tracks = [
-  { name: 'Paper presentation', desc: 'Submit and present original research across engineering disciplines.', icon: FileText, glow: 'shadow-glow-violet', border: 'hover:border-signal', chip: 'bg-signal-tint text-signal-dark' },
-  { name: 'Project demo', desc: 'Show working builds, prototypes, and student-led products.', icon: MonitorPlay, glow: 'shadow-glow-cyan', border: 'hover:border-byte', chip: 'bg-byte-tint text-byte' },
-  { name: 'Poster', desc: 'Visual summaries of ongoing or completed student work.', icon: Layers, glow: 'shadow-glow-violet', border: 'hover:border-signal', chip: 'bg-signal-tint text-signal-dark' },
-  { name: 'Attendee', desc: 'Sit in on sessions, ask questions, meet people building things.', icon: Users, glow: 'shadow-glow-cyan', border: 'hover:border-byte', chip: 'bg-byte-tint text-byte' },
+  { name: 'Paper presentation', desc: 'Original research across engineering disciplines, reviewed by peers and mentors.', icon: FileText, big: true },
+  { name: 'Project demo', desc: 'Show working builds live.', icon: MonitorPlay },
+  { name: 'Poster', desc: 'Visual research summaries.', icon: Layers },
+  { name: 'Attendee', desc: 'Sit in, ask questions, connect.', icon: Users },
 ]
 
 const timeline = [
   { label: 'Registration opens', date: 'Sept 2026', done: true },
-  { label: 'Abstract deadline', date: '30 Sept 2026', done: false },
-  { label: 'Shortlist announced', date: '7 Oct 2026', done: false },
+  { label: 'Abstract deadline', date: 'Oct 2026', done: false },
+  { label: 'Shortlist announced', date: 'Oct 2026', done: false },
   { label: 'Conference day', date: 'Eve of Innovation Day', done: false },
 ]
 
-const heroLine = 'Student innovation conference 2026'
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-}
-
 export default function Landing() {
   const words = heroLine.split(' ')
+  const heroRef = useRef(null)
+  const mvX = useMotionValue(0.5)
+  const mvY = useMotionValue(0.5)
+  const blobX = useTransform(mvX, [0, 1], [-40, 40])
+  const blobY = useTransform(mvY, [0, 1], [-30, 30])
+  const springX = useSpring(blobX, { stiffness: 60, damping: 20 })
+  const springY = useSpring(blobY, { stiffness: 60, damping: 20 })
+
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2])
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.92])
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 80])
+
+  function handlePointerMove(e) {
+    const rect = heroRef.current.getBoundingClientRect()
+    mvX.set((e.clientX - rect.left) / rect.width)
+    mvY.set((e.clientY - rect.top) / rect.height)
+  }
+
   return (
     <div className="overflow-hidden">
-      <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-28">
-        <div className="absolute -top-32 -right-20 w-[28rem] h-[28rem] rounded-full bg-signal/25 blur-[100px] animate-pulse-glow -z-10" />
-        <div className="absolute top-32 -left-32 w-96 h-96 rounded-full bg-byte/20 blur-[100px] animate-drift -z-10" />
+      <motion.section
+        ref={heroRef}
+        onMouseMove={handlePointerMove}
+        style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+        className="relative max-w-6xl mx-auto px-6 pt-24 pb-20"
+      >
+        <motion.div
+          style={{ x: springX, y: springY }}
+          className="absolute -top-32 -right-20 w-[30rem] h-[30rem] rounded-full bg-signal/25 blur-[110px] -z-10"
+        />
+        <motion.div
+          style={{ x: useTransform(springX, (v) => -v), y: useTransform(springY, (v) => -v) }}
+          className="absolute top-32 -left-32 w-96 h-96 rounded-full bg-byte/20 blur-[110px] -z-10"
+        />
         <div className="absolute inset-0 bg-grid -z-20 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_40%,transparent_100%)]" />
 
         <motion.div
@@ -50,26 +139,36 @@ export default function Landing() {
           Hosted by Byte and Qbit clubs · HCST Farah
         </motion.div>
 
-        <h1 className="font-display text-5xl sm:text-7xl leading-[1.05] max-w-4xl mb-6" aria-label={heroLine}>
+        <h1 className="font-display font-medium text-[13vw] sm:text-7xl lg:text-8xl leading-[0.95] tracking-tight max-w-5xl mb-2" aria-label={heroLine + ' 2026'}>
           {words.map((word, i) => (
             <motion.span
               key={i}
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + i * 0.07, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className={`inline-block mr-[0.28em] ${i >= words.length - 2 ? 'gradient-text' : 'text-ink'}`}
+              initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ delay: 0.15 + i * 0.08, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-block mr-[0.25em] text-ink"
               aria-hidden="true"
             >
               {word}
             </motion.span>
           ))}
+          <br />
+          <motion.span
+            initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ delay: 0.5, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-block gradient-text"
+            aria-hidden="true"
+          >
+            2026.
+          </motion.span>
         </h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.65, duration: 0.5 }}
-          className="text-muted max-w-content text-lg leading-relaxed mb-10"
+          transition={{ delay: 0.75, duration: 0.6 }}
+          className="text-muted max-w-content text-lg leading-relaxed mb-10 mt-6"
         >
           Planned, run, and owned entirely by students — from call for papers to
           stage coordination — with faculty serving only as mentors. Registration
@@ -80,49 +179,76 @@ export default function Landing() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
-          className="flex flex-wrap gap-4 mb-16"
+          transition={{ delay: 0.9, duration: 0.5 }}
+          className="flex flex-wrap gap-4 mb-20"
         >
-          <Link
+          <MagneticButton
+            as={Link}
             to="/register"
-            className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-sm font-medium text-white bg-aurora bg-[length:200%_200%] hover:bg-[position:100%_50%] hover:shadow-glow-violet transition-all"
+            className="group inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm font-medium text-white bg-aurora bg-[length:200%_200%] hover:bg-[position:100%_50%] hover:shadow-glow-violet transition-all"
           >
             Register now
             <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </Link>
-          <a
+          </MagneticButton>
+          <MagneticButton
+            as="a"
             href="#tracks"
-            className="glass px-7 py-3.5 rounded-lg text-sm font-medium text-ink hover:border-signal hover:shadow-glow-soft transition-all"
+            className="glass px-8 py-4 rounded-full text-sm font-medium text-ink hover:border-signal hover:shadow-glow-soft transition-all"
           >
             View tracks
-          </a>
+          </MagneticButton>
         </motion.div>
+      </motion.section>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.95, duration: 0.5 }}
-          className="flex flex-wrap gap-8"
-        >
-          <Stat value="8" label="tracks open" accent="signal" />
-          <Stat value="1" label="day event" accent="byte" />
-          <Stat value="Free" label="to register" accent="byte" />
-          <Stat value="₹100" label="if shortlisted" accent="signal" />
-        </motion.div>
+      <div className="border-y border-rule glass py-4 overflow-hidden relative">
+        <div className="flex whitespace-nowrap animate-marquee w-max">
+          {[...Array(2)].map((_, rep) => (
+            <div key={rep} className="flex items-center gap-10 pr-10">
+              {['BYTE CLUB', 'QBIT CLUB', 'HCST FARAH', 'INNOVATION DAY 2026', 'CALL FOR PAPERS OPEN'].map((t) => (
+                <span key={t} className="flex items-center gap-3 text-sm font-mono text-muted">
+                  <Cpu size={14} className="text-signal-dark" />
+                  {t}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <section className="border-b border-rule">
+        <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}>
+            <p className="font-display text-4xl sm:text-5xl gradient-text"><Counter to={8} /></p>
+            <p className="text-xs text-muted mt-2 font-mono">tracks open</p>
+          </motion.div>
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} transition={{ delay: 0.1 }}>
+            <p className="font-display text-4xl sm:text-5xl gradient-text"><Counter to={1} /></p>
+            <p className="text-xs text-muted mt-2 font-mono">day event</p>
+          </motion.div>
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} transition={{ delay: 0.2 }}>
+            <p className="font-display text-4xl sm:text-5xl text-byte">Free</p>
+            <p className="text-xs text-muted mt-2 font-mono">to register</p>
+          </motion.div>
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} transition={{ delay: 0.3 }}>
+            <p className="font-display text-4xl sm:text-5xl text-signal-dark"><Counter to={100} prefix="₹" /></p>
+            <p className="text-xs text-muted mt-2 font-mono">if shortlisted</p>
+          </motion.div>
+        </div>
       </section>
 
-      <section id="tracks" className="border-t border-rule relative">
-        <div className="max-w-6xl mx-auto px-6 py-24">
+      <section id="tracks" className="relative">
+        <div className="max-w-6xl mx-auto px-6 py-28">
           <motion.h2
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-80px' }}
             variants={fadeUp}
-            className="font-display text-4xl mb-12"
+            className="font-display text-4xl sm:text-5xl mb-14 tracking-tight"
           >
-            Conference <span className="gradient-text">tracks</span>
+            Four ways to <span className="gradient-text">take part</span>
           </motion.h2>
-          <div className="grid sm:grid-cols-2 gap-5">
+
+          <div className="grid sm:grid-cols-3 gap-5">
             {tracks.map((t, i) => {
               const Icon = t.icon
               return (
@@ -133,14 +259,26 @@ export default function Landing() {
                   viewport={{ once: true, margin: '-60px' }}
                   variants={fadeUp}
                   transition={{ delay: i * 0.08 }}
-                  whileHover={{ y: -6 }}
-                  className={`glass rounded-2xl p-7 transition-all ${t.border} hover:${t.glow}`}
+                  whileHover={{ y: -6, scale: 1.01 }}
+                  className={`glass rounded-3xl p-8 transition-all hover:border-signal hover:shadow-glow-violet ${
+                    t.big ? 'sm:col-span-2 sm:row-span-2 flex flex-col justify-between' : ''
+                  }`}
                 >
-                  <div className={`w-11 h-11 rounded-xl ${t.chip} flex items-center justify-center mb-5`}>
-                    <Icon size={19} />
+                  <div>
+                    <div className="w-12 h-12 rounded-2xl bg-signal-tint text-signal-dark flex items-center justify-center mb-6">
+                      <Icon size={20} />
+                    </div>
+                    <p className={`font-display text-ink mb-2 ${t.big ? 'text-3xl' : 'text-xl'}`}>{t.name}</p>
+                    <p className="text-sm text-muted leading-relaxed max-w-sm">{t.desc}</p>
                   </div>
-                  <p className="font-medium text-lg mb-1.5 text-ink">{t.name}</p>
-                  <p className="text-sm text-muted leading-relaxed">{t.desc}</p>
+                  {t.big && (
+                    <Link
+                      to="/register"
+                      className="inline-flex items-center gap-1.5 text-sm text-signal-dark mt-8 hover:gap-2.5 transition-all w-fit"
+                    >
+                      Submit an abstract <ArrowRight size={14} />
+                    </Link>
+                  )}
                 </motion.div>
               )
             })}
@@ -149,13 +287,13 @@ export default function Landing() {
       </section>
 
       <section id="timeline" className="border-t border-rule">
-        <div className="max-w-6xl mx-auto px-6 py-24">
+        <div className="max-w-6xl mx-auto px-6 py-28">
           <motion.h2
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-80px' }}
             variants={fadeUp}
-            className="font-display text-4xl mb-16"
+            className="font-display text-4xl sm:text-5xl mb-16 tracking-tight"
           >
             <span className="gradient-text">Timeline</span>
           </motion.h2>
@@ -198,40 +336,31 @@ export default function Landing() {
       </section>
 
       <section className="border-t border-rule">
-        <div className="max-w-6xl mx-auto px-6 py-24">
+        <div className="max-w-6xl mx-auto px-6 py-28">
           <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-80px' }}
             variants={fadeUp}
-            className="relative rounded-3xl px-8 py-16 text-center overflow-hidden bg-aurora shadow-glow-violet"
+            className="relative rounded-[2.5rem] px-8 py-20 text-center overflow-hidden bg-aurora shadow-glow-violet"
           >
             <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-black/20 blur-3xl" />
             <div className="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-black/20 blur-3xl" />
-            <h2 className="font-display text-3xl sm:text-4xl mb-3 relative text-white">
-              Ready to present your idea?
+            <h2 className="font-display text-4xl sm:text-6xl mb-4 relative text-white tracking-tight">
+              Ready to present<br />your idea?
             </h2>
-            <p className="text-white/80 mb-8 relative">Seats and speaker slots are limited.</p>
-            <Link
+            <p className="text-white/80 mb-10 relative">Seats and speaker slots are limited.</p>
+            <MagneticButton
+              as={Link}
               to="/register"
-              className="relative inline-flex items-center gap-2 bg-paper text-ink px-7 py-3.5 rounded-lg text-sm font-medium hover:bg-white hover:text-signal transition-colors"
+              className="relative inline-flex items-center gap-2 bg-paper text-ink px-8 py-4 rounded-full text-sm font-medium hover:bg-white hover:text-signal transition-colors"
             >
               Register for SIC 2026
               <ArrowRight size={16} />
-            </Link>
+            </MagneticButton>
           </motion.div>
         </div>
       </section>
-    </div>
-  )
-}
-
-function Stat({ value, label, accent }) {
-  const cls = accent === 'byte' ? 'text-byte' : 'text-signal-dark'
-  return (
-    <div className="font-mono text-sm">
-      <p className={`text-2xl font-medium ${cls}`}>{value}</p>
-      <p className="text-muted">{label}</p>
     </div>
   )
 }

@@ -8,15 +8,15 @@ import Nav from './components/Nav.jsx'
 import Footer from './components/Footer.jsx'
 import CursorDot from './components/CursorDot.jsx'
 import Checkin from './pages/Checkin.jsx'
-
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
+      <div className="noise-overlay" />
       <Nav />
       <main className="flex-1">
         <CursorDot />
         <Routes>
-          <Route path="/checkin" element={<Checkin />} />
+             <Route path="/checkin" element={<Checkin />} />
           <Route path="/" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/ticket/:ticketId" element={<Ticket />} />
@@ -24,7 +24,7 @@ export default function App() {
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>
-      <Footer />
+     <Footer />
     </div>
-  )
-}
+   )
+} 

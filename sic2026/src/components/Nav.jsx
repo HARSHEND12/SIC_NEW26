@@ -8,7 +8,7 @@ const links = [
   { href: '/#timeline', label: 'Timeline' },
   { href: '/status', label: 'Check status' },
 ]
-
+//ring cursor effect ke sath krna hai!!
 export default function Nav() {
   const [open, setOpen] = useState(false)
 
