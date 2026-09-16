@@ -4,29 +4,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: '#0A0A18',
-        ink: '#F3F1FF',
-        muted: '#9C9AC2',
-        rule: '#2A2A4A',
-        surface: '#13132E',
+        paper: '#0B0D14',
+        ink: '#EDEEF2',
+        muted: '#8E93A6',
+        rule: '#22263A',
+        surface: '#12152260',
         signal: {
-          DEFAULT: '#8B5CF6',
-          dark: '#C4B5FD',
-          tint: '#241C4A',
+          DEFAULT: '#6366F1',
+          dark: '#A5B4FC',
+          tint: '#1B1E3D',
         },
         byte: {
-          DEFAULT: '#22D3EE',
-          tint: '#0E2E36',
+          DEFAULT: '#2DD4BF',
+          tint: '#0E2C2B',
         },
         warn: {
-          DEFAULT: '#FB923C',
-          tint: '#3A2412',
+          DEFAULT: '#F59E0B',
+          tint: '#332210',
         },
       },
       fontFamily: {
-        display: ['"Fraunces"', 'serif'],
-        sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        display: ['"Instrument Serif"', 'Georgia', 'serif'],
+        sans: ['"Inter"', 'ui-sans-serif', 'system-ui'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        hand: ['"Caveat"', 'cursive'],
       },
       maxWidth: {
         content: '68ch',
