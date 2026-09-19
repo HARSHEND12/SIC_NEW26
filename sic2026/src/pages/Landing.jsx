@@ -1288,6 +1288,7 @@
 //   )
 // }
 
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
@@ -1301,10 +1302,7 @@ import {
   FileText,
   IndianRupee,
   Leaf,
-  Lightbulb,
   MapPin,
-  Presentation,
-  Target,
   Users,
   Wifi,
 } from 'lucide-react'
@@ -1466,8 +1464,10 @@ const researchTracks = [
 export default function Landing() {
   return (
     <div>
-      {/* HERO */}
-      <section className="max-w-6xl mx-auto px-6 pt-24 pb-24 sm:pt-32 sm:pb-32">
+      {/* =========================================================
+          HERO
+      ========================================================= */}
+      <section className="max-w-6xl mx-auto px-6 pt-24 pb-20 sm:pt-32 sm:pb-24">
         <motion.p
           initial={{ opacity: 0, rotate: -4 }}
           animate={{ opacity: 1, rotate: -3 }}
@@ -1520,6 +1520,7 @@ export default function Landing() {
             className="group inline-flex items-center gap-2 px-7 py-4 bg-signal text-black font-display uppercase tracking-wide text-sm border-2 border-ink shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
           >
             Register — free
+
             <ArrowRight
               size={16}
               className="transition-transform group-hover:translate-x-0.5"
@@ -1535,7 +1536,14 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      {/* ABOUT */}
+      {/* =========================================================
+          COUNTDOWN
+      ========================================================= */}
+      <Countdown />
+
+      {/* =========================================================
+          ABOUT
+      ========================================================= */}
       <section id="about" className="border-t-2 border-rule">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <SectionHeading
@@ -1543,7 +1551,8 @@ export default function Landing() {
             label="ABOUT"
             title={
               <>
-                Run by students. <span className="text-byte">For students.</span>
+                Run by students.{' '}
+                <span className="text-byte">For students.</span>
               </>
             }
             description="NEXORA gives students ownership of every aspect of a professional academic conference — and a chance to present ideas, get real feedback, and build a research mindset early."
@@ -1558,11 +1567,16 @@ export default function Landing() {
                 viewport={{ once: true, margin: '-60px' }}
                 variants={fade}
                 transition={{ delay: index * 0.1 }}
-                className={`p-8 ${index !== about.length - 1
+                className={`p-8 ${
+                  index !== about.length - 1
                     ? 'border-b-2 sm:border-b-0 sm:border-r-2 border-ink'
                     : ''
-                  }`}
+                }`}
               >
+                <div className="font-mono text-[10px] text-signal mb-6">
+                  0{index + 1}
+                </div>
+
                 <h3 className="font-display uppercase text-xl mb-3 text-ink">
                   {item.title}
                 </h3>
@@ -1576,7 +1590,9 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* THEME */}
+      {/* =========================================================
+          THEME
+      ========================================================= */}
       <section id="theme" className="border-t-2 border-rule">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <motion.div
@@ -1605,7 +1621,9 @@ export default function Landing() {
                 Student Innovations
                 <br />
                 <span className="italic text-muted">for a</span>{' '}
-                <span className="text-signal">Sustainable Future</span>
+                <span className="text-signal">
+                  Sustainable Future
+                </span>
               </h2>
 
               <p className="max-w-2xl mx-auto mt-8 text-muted leading-relaxed">
@@ -1637,7 +1655,9 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* RESEARCH TRACKS */}
+      {/* =========================================================
+          RESEARCH TRACKS
+      ========================================================= */}
       <section id="tracks" className="border-t-2 border-rule">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <SectionHeading
@@ -1689,102 +1709,13 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* PARTICIPATION */}
-      <section id="eligibility" className="border-t-2 border-rule">
-        <div className="max-w-6xl mx-auto px-6 py-24">
-          <SectionHeading
-            number="04"
-            label="PARTICIPATION"
-            title={
-              <>
-                Who can <span className="italic text-muted">join?</span>
-              </>
-            }
-            description="NEXORA is designed to give students an accessible platform for presenting ideas, research and innovation."
-          />
-
-          <div className="grid sm:grid-cols-2 border-2 border-ink">
-            {eligibility.map((item, index) => (
-              <motion.div
-                key={item}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                variants={fade}
-                transition={{ delay: index * 0.08 }}
-                className={`p-7 ${index < 2 ? 'border-b-2 border-ink' : ''
-                  } ${index % 2 === 0 ? 'sm:border-r-2 border-ink' : ''}`}
-              >
-                <div className="flex items-center justify-between mb-8">
-                  <div className="w-9 h-9 border-2 border-ink flex items-center justify-center">
-                    <Check size={15} className="text-signal" />
-                  </div>
-
-                  <span className="font-mono text-[10px] text-muted">
-                    0{index + 1}
-                  </span>
-                </div>
-
-                <p className="text-sm text-muted leading-relaxed">{item}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* JOURNEY */}
-      <section id="process" className="border-t-2 border-rule">
-        <div className="max-w-6xl mx-auto px-6 py-24">
-          <SectionHeading
-            number="05"
-            label="THE JOURNEY"
-            title={
-              <>
-                From idea
-                <br />
-                to <span className="italic text-muted">presentation.</span>
-              </>
-            }
-            description="NEXORA takes your work through a structured research journey, from the first abstract to the final presentation before the evaluation panel."
-          />
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {journey.map((item, index) => (
-              <motion.div
-                key={item.number}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                variants={fade}
-                transition={{ delay: index * 0.08 }}
-                className="border-2 border-ink bg-surface p-7"
-              >
-                <div className="w-14 h-14 border-2 border-ink bg-paper flex items-center justify-center font-display text-xl text-signal mb-8">
-                  {item.number}
-                </div>
-
-                <p className="font-mono text-[10px] tracking-widest text-signal mb-2">
-                  {item.label}
-                </p>
-
-                <h3 className="font-display uppercase text-2xl mb-3">
-                  {item.title}
-                </h3>
-
-                <p className="text-sm text-muted leading-relaxed">
-                  {item.text}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* EVENT DETAILS */}
+      {/* =========================================================
+          EVENT DETAILS
+      ========================================================= */}
       <section id="details" className="border-t-2 border-rule">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <SectionHeading
-            number="06"
+            number="04"
             label="EVENT DETAILS"
             title={
               <>
@@ -1868,7 +1799,111 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* FACULTY */}
+      {/* =========================================================
+          JOURNEY
+      ========================================================= */}
+      <section id="process" className="border-t-2 border-rule">
+        <div className="max-w-6xl mx-auto px-6 py-24">
+          <SectionHeading
+            number="05"
+            label="THE JOURNEY"
+            title={
+              <>
+                From idea
+                <br />
+                to <span className="italic text-muted">presentation.</span>
+              </>
+            }
+            description="NEXORA takes your work through a structured research journey, from the first abstract to the final presentation before the evaluation panel."
+          />
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {journey.map((item, index) => (
+              <motion.div
+                key={item.number}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={fade}
+                transition={{ delay: index * 0.08 }}
+                className="border-2 border-ink bg-surface p-7"
+              >
+                <div className="w-14 h-14 border-2 border-ink bg-paper flex items-center justify-center font-display text-xl text-signal mb-8">
+                  {item.number}
+                </div>
+
+                <p className="font-mono text-[10px] tracking-widest text-signal mb-2">
+                  {item.label}
+                </p>
+
+                <h3 className="font-display uppercase text-2xl mb-3">
+                  {item.title}
+                </h3>
+
+                <p className="text-sm text-muted leading-relaxed">
+                  {item.text}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          PARTICIPATION
+      ========================================================= */}
+      <section id="eligibility" className="border-t-2 border-rule">
+        <div className="max-w-6xl mx-auto px-6 py-24">
+          <SectionHeading
+            number="06"
+            label="PARTICIPATION"
+            title={
+              <>
+                Who can <span className="italic text-muted">join?</span>
+              </>
+            }
+            description="NEXORA is designed to give students an accessible platform for presenting ideas, research and innovation."
+          />
+
+          <div className="grid sm:grid-cols-2 border-2 border-ink">
+            {eligibility.map((item, index) => (
+              <motion.div
+                key={item}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={fade}
+                transition={{ delay: index * 0.08 }}
+                className={`p-7 ${
+                  index < 2 ? 'border-b-2 border-ink' : ''
+                } ${
+                  index % 2 === 0
+                    ? 'sm:border-r-2 border-ink'
+                    : ''
+                }`}
+              >
+                <div className="flex items-center justify-between mb-8">
+                  <div className="w-9 h-9 border-2 border-ink flex items-center justify-center">
+                    <Check size={15} className="text-signal" />
+                  </div>
+
+                  <span className="font-mono text-[10px] text-muted">
+                    0{index + 1}
+                  </span>
+                </div>
+
+                <p className="text-sm text-muted leading-relaxed">
+                  {item}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          FACULTY
+      ========================================================= */}
       <section id="leadership" className="border-t-2 border-rule">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <SectionHeading
@@ -1909,7 +1944,9 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* COMMITTEE */}
+      {/* =========================================================
+          COMMITTEE
+      ========================================================= */}
       <section className="border-t-2 border-rule">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <SectionHeading
@@ -1934,7 +1971,9 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* =========================================================
+          CTA
+      ========================================================= */}
       <section className="border-t-2 border-rule">
         <div className="max-w-6xl mx-auto px-6 py-28 text-center">
           <motion.div
@@ -1974,7 +2013,172 @@ export default function Landing() {
   )
 }
 
-function SectionHeading({ number, label, title, description }) {
+/* =============================================================
+   COUNTDOWN COMPONENT
+============================================================= */
+
+function Countdown() {
+  const calculateTimeLeft = () => {
+    const targetDate = new Date('2026-10-14T00:00:00+05:30')
+    const now = new Date()
+    const difference = targetDate.getTime() - now.getTime()
+
+    if (difference <= 0) {
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        expired: true,
+      }
+    }
+
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor(
+        (difference / (1000 * 60 * 60)) % 24
+      ),
+      minutes: Math.floor(
+        (difference / (1000 * 60)) % 60
+      ),
+      seconds: Math.floor(
+        (difference / 1000) % 60
+      ),
+      expired: false,
+    }
+  }
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const countdownItems = [
+    {
+      value: timeLeft.days,
+      label: 'DAYS',
+    },
+    {
+      value: timeLeft.hours,
+      label: 'HOURS',
+    },
+    {
+      value: timeLeft.minutes,
+      label: 'MINUTES',
+    },
+    {
+      value: timeLeft.seconds,
+      label: 'SECONDS',
+    },
+  ]
+
+  return (
+    <section className="border-y-2 border-rule">
+      <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={fade}
+          className="relative border-2 border-ink bg-ink text-paper overflow-hidden"
+        >
+          {/* Decorative background grid */}
+          <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage:
+                  'linear-gradient(#F7F7F2 1px, transparent 1px), linear-gradient(90deg, #F7F7F2 1px, transparent 1px)',
+                backgroundSize: '32px 32px',
+              }}
+            />
+          </div>
+
+          <div className="relative p-7 sm:p-10 lg:p-12">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+              <div>
+                <p className="font-mono text-[10px] sm:text-xs tracking-[0.25em] text-signal mb-2">
+                  NEXORA / 2026
+                </p>
+
+                <h2 className="font-display uppercase text-3xl sm:text-4xl">
+                  Conference begins in
+                </h2>
+              </div>
+
+              <div className="flex items-center gap-2 font-mono text-[10px] text-paper/50">
+                <span className="w-2 h-2 bg-signal rounded-full animate-pulse" />
+                COUNTDOWN LIVE
+              </div>
+            </div>
+
+            {timeLeft.expired ? (
+              <div className="border-2 border-signal p-8 text-center">
+                <p className="font-display uppercase text-4xl sm:text-6xl text-signal">
+                  NEXORA 2026 IS LIVE
+                </p>
+
+                <p className="font-mono text-xs text-paper/60 mt-4">
+                  14 OCTOBER 2026 · HCST
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                {countdownItems.map((item, index) => (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      delay: index * 0.08,
+                      duration: 0.4,
+                    }}
+                    className="border-2 border-paper/30 bg-paper/[0.04] p-5 sm:p-7 text-center"
+                  >
+                    <p className="font-display text-5xl sm:text-6xl lg:text-7xl leading-none text-signal tabular-nums">
+                      {String(item.value).padStart(2, '0')}
+                    </p>
+
+                    <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] text-paper/50 mt-4">
+                      {item.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-paper/20">
+              <p className="font-mono text-[10px] text-paper/50 uppercase tracking-widest">
+                14 October 2026
+              </p>
+
+              <p className="font-mono text-[10px] text-paper/50 uppercase tracking-widest text-center sm:text-right">
+                A.P.J. Abdul Kalam Auditorium · HCST
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+/* =============================================================
+   SECTION HEADING
+============================================================= */
+
+function SectionHeading({
+  number,
+  label,
+  title,
+  description,
+}) {
   return (
     <motion.div
       initial="hidden"
@@ -1992,14 +2196,23 @@ function SectionHeading({ number, label, title, description }) {
       </h2>
 
       {description && (
-        <p className="text-muted leading-relaxed mt-5">{description}</p>
+        <p className="text-muted leading-relaxed mt-5">
+          {description}
+        </p>
       )}
     </motion.div>
   )
 }
 
+/* =============================================================
+   INITIALS
+============================================================= */
+
 function initialsFor(name) {
-  const cleanName = name.replace(/^(Prof\.|Dr\.|Shri|Mr\.)\s*/, '')
+  const cleanName = name.replace(
+    /^(Prof\.|Dr\.|Shri|Mr\.)\s*/,
+    ''
+  )
 
   return cleanName
     .split(/\s+/)
@@ -2007,6 +2220,10 @@ function initialsFor(name) {
     .slice(0, 2)
     .join('')
 }
+
+/* =============================================================
+   PERSON CARD
+============================================================= */
 
 function PersonCard({ person, delay = 0 }) {
   return (
@@ -2032,7 +2249,9 @@ function PersonCard({ person, delay = 0 }) {
           {person.role}
         </p>
 
-        <p className="text-xs text-muted/70 mt-0.5">{person.note}</p>
+        <p className="text-xs text-muted/70 mt-0.5">
+          {person.note}
+        </p>
       </div>
 
       <ArrowUpRight
@@ -2042,4 +2261,3 @@ function PersonCard({ person, delay = 0 }) {
     </motion.div>
   )
 }
-
